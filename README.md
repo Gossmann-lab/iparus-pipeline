@@ -32,7 +32,7 @@ Where each file in `data/` comes from:
 
 | file | made by | contents |
 |---|---|---|
-| `samples.txt` | written by hand | one sample name per line |
+| `samples.txt` | written by hand | one sample name per line (SRA accession, or specimen ID for samples not yet on public archives) |
 | `sex_results.tsv` | `scripts/02_sex_check.sh` | Z/autosome depth ratio and sex of each sample |
 | `bam_checksums.txt` | `md5sum` on the Version 1.0 BAM files made by `scripts/01_make_bams.sh` | MD5 checksum of each BAM file on IPARUS |
 
@@ -177,7 +177,7 @@ Before using downloaded BAM files, check them against `data/bam_checksums.txt` (
 └── bams/                                          ← created by step 1
 ```
 
-The sample list `data/samples.txt` has one name per line: the file name without `_1.fq.gz`, e.g. `SRR1793405`.
+The sample list data/samples.txt has one name per line: the file name without _1.fq.gz. In IPARUS, a sample name is usually the SRA run accession of the sample (e.g. SRR1793405). The exception is samples with no SRA accessions yet, such as the ten museum specimens: their sample names are the specimen IDs of the birds (e.g. B1538).
 
 **Run:**
 
