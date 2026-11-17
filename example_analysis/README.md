@@ -2,7 +2,7 @@
 
 [← back to the main README](../README.md)
 
-This example shows what the iParus alignments can be used for. It takes BAM files from the database and compares Japanese tits (*Parus minor*, China) with European great tits (*Parus major*) along chromosome 1A, in two ways:
+This example shows what the iParus alignments can be used for as in the manuscript. It takes BAM files from the database and compares Japanese tits (*Parus minor*, China) with European great tits (*Parus major*) along chromosome 1A, in two ways:
 
 - **Genetic divergence (FST)** across the whole chromosome, in windows, and per gene. Script: [`fst_chr1A.sh`](fst_chr1A.sh).
 - **Population structure (PCA)** of 20 individuals: the two groups above plus four Asian *P. major*. Script: [`pca_chr1A.sh`](pca_chr1A.sh).
