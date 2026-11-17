@@ -145,7 +145,7 @@ The raw reads and BAM files are too large for GitHub.
 
 | data | where |
 |---|---|
-| BAM files of Database Version 1.0 (+ index) | [IPARUS](https://gossmann-lab.github.io/iparus/) |
+| BAM files of Database Version 1.0 (+ index) | [IPARUS Database](https://gossmann-lab.github.io/iparus/) |
 | raw reads | public archives (NCBI SRA / ENA), under the accessions as in `data/samples.txt` |
 | reference genome and annotation | NCBI, GCF_001522545.3 (see [Installation](#installation)) |
 
