@@ -12,7 +12,7 @@
 
 # ---- edit these ----
 BAM_DIR=$HOME/iparus/bams
-OUTPUT=data/sex_results.tsv
+OUTPUT=sex_results.tsv
 # --------------------
 
 command -v samtools > /dev/null || { echo "samtools is not installed (see README)"; exit 1; }
