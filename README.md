@@ -229,7 +229,7 @@ bash scripts/02_sex_check.sh SRR2961674          # or just one sample
 
 If a BAM has no index, the script creates one.
 
-**Output:** `data/sex_results.tsv`, with one line per sample:
+**Output:** `sex_results.tsv`, with one line per sample:
 
 | column | meaning |
 |---|---|
