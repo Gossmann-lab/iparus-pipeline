@@ -7,17 +7,21 @@
 #
 # Raw reads must be named SAMPLE_1.fq.gz and SAMPLE_2.fq.gz and be somewhere in
 # FASTQ_DIR, either directly or in a subfolder (e.g. one folder per sample).
+# A SAMPLE.sra file downloaded with prefetch is converted to these automatically.
 # Result: OUT_DIR/SAMPLE/SAMPLE_sorted_dedup.bam
 
 set -euo pipefail
 
-# ---- edit these paths ----
-REF=$HOME/iparus/GCF_001522545.3_Parus_major1.1_genomic.fna
-FASTQ_DIR=$HOME/iparus/raw_reads
-OUT_DIR=$HOME/iparus/bams
-TRIMMOMATIC=$HOME/tools/Trimmomatic-0.39/trimmomatic-0.39.jar
-ADAPTERS=$HOME/tools/Trimmomatic-0.39/adapters/TruSeq3-PE-2.fa
-# --------------------------
+# ---- edit these two folders ----
+IPARUS_DIR=$HOME/iparus          # contains the reference, raw_reads/ and (later) bams/
+TOOLS_DIR=$HOME/tools            # contains Trimmomatic-0.39/
+# ---------------------------------
+
+REF=$IPARUS_DIR/GCF_001522545.3_Parus_major1.1_genomic.fna
+FASTQ_DIR=$IPARUS_DIR/raw_reads
+OUT_DIR=$IPARUS_DIR/bams
+TRIMMOMATIC=$TOOLS_DIR/Trimmomatic-0.39/trimmomatic-0.39.jar
+ADAPTERS=$TOOLS_DIR/Trimmomatic-0.39/adapters/TruSeq3-PE-2.fa
 
 # check that all tools are installed
 for tool in java fastqc bwa-mem2 samtools gatk Rscript; do
@@ -46,6 +50,22 @@ for S in $SAMPLES; do
     # find the reads anywhere under FASTQ_DIR (e.g. in a folder per sample)
     R1=$(find "$FASTQ_DIR" -name "${S}_1.fq.gz" | head -n 1)
     R2=$(find "$FASTQ_DIR" -name "${S}_2.fq.gz" | head -n 1)
+
+    # no reads yet, but a downloaded SRA file (from prefetch)? -> convert it to SAMPLE_1/_2.fq.gz
+    SRA=$(find "$FASTQ_DIR" -name "${S}.sra" | head -n 1)
+    if { [ -z "$R1" ] || [ -z "$R2" ]; } && [ -n "$SRA" ]; then
+        command -v fasterq-dump > /dev/null || { echo "fasterq-dump is not installed (see README)"; exit 1; }
+        echo "Converting $SRA to FASTQ"
+        SD=$(dirname "$SRA")
+        fasterq-dump --split-files --threads 5 --temp "$TMP" -O "$SD" "$SRA"
+        [ -f "$SD/${S}_2.fastq" ] || { echo "$S is not paired-end (no _2 reads); it cannot be used"; exit 1; }
+        if command -v pigz > /dev/null; then ZIP="pigz -p 5"; else ZIP=gzip; fi
+        $ZIP "$SD/${S}_1.fastq" "$SD/${S}_2.fastq"
+        mv "$SD/${S}_1.fastq.gz" "$SD/${S}_1.fq.gz"
+        mv "$SD/${S}_2.fastq.gz" "$SD/${S}_2.fq.gz"
+        R1=$SD/${S}_1.fq.gz
+        R2=$SD/${S}_2.fq.gz
+    fi
     [ -n "$R1" ] && [ -n "$R2" ] || { echo "Reads for $S not found in $FASTQ_DIR"; exit 1; }
 
     # 1. quality check and trimming
